@@ -2,6 +2,7 @@ package com.blog.infrastructure.services.contracts;
 
 import com.blog.api.models.requests.PublicationRequest;
 import com.blog.api.models.responses.PublicationResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -13,7 +14,8 @@ import java.util.List;
 public interface PublicationService {
     PublicationResponse save(PublicationRequest request);
     PublicationResponse getById(Long id);
-    List<PublicationResponse> getAll();
+    Page<PublicationResponse> getAll(int page, int size);
     PublicationResponse update(Long id, PublicationRequest request);
     void delete(Long id);
+    List<PublicationResponse> getByTitle(String tile);
 }
