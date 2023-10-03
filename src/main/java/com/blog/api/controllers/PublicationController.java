@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,15 +62,22 @@ public class PublicationController {
     @GetMapping
     @Operation(summary = "servicio para obtener publicaciones",
             description = "servicio para obtener publicaciones")
-    @Parameter(name = "id", description = "id de la publicacion")
+    @Parameters({
+            @Parameter(name = "page", description = "numero pagina 0->"),
+            @Parameter(name = "size", description = "numero de elementos")
+    }
+    )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "ok"),
             @ApiResponse(responseCode = "204", description = "no content"),
             @ApiResponse(responseCode = "500", description = "internal server error")
     })
-    public ResponseEntity<List<PublicationResponse>> getAll(){
+    public ResponseEntity<Page<PublicationResponse>> getAll(@RequestParam int page,
+                                                            @RequestParam int size){
         log.info("#### endpoint buscar publicaciones ####");
-        var response = publicationService.getAll();
+        if (page < 0) page = 0;
+        if (size < 0) size = 10;
+        var response = publicationService.getAll(page, size);
         if (response.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(response);
@@ -106,5 +114,22 @@ public class PublicationController {
         log.info("#### endpoint eliminar publicacion");
         publicationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/title/{title}")
+    @Operation(summary = "servicio para obtener publicaciones por titulo",
+            description = "servicio para obtener publicaciones por titulo si existe")
+    @Parameter(name = "title", description = "titulo de la publicacion")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "ok"),
+            @ApiResponse(responseCode = "204", description = "no content"),
+            @ApiResponse(responseCode = "500", description = "internal server error")
+    })
+    public ResponseEntity<List<PublicationResponse>> getByTitle(@PathVariable String title){
+                log.info("#### endpoint buscar publicaciones por titulo ####");
+                var response = publicationService.getByTitle(title);
+                if (response.isEmpty())
+                    return ResponseEntity.noContent().build();
+                return ResponseEntity.ok(response);
     }
 }

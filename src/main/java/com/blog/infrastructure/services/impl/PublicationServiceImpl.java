@@ -10,6 +10,9 @@ import com.blog.util.constants.PublicationConst;
 import com.blog.util.maps.PublicationMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,12 +54,14 @@ public class PublicationServiceImpl implements PublicationService {
         return PublicationMap.mapToDto(publication);
     }
     @Override
-    public List<PublicationResponse> getAll() {
+    public Page<PublicationResponse> getAll(int page, int size) {
         log.info("---> inicio servicio buscar publicaciones");
         log.info("---> buscando publicaciones...");
-        var publicaciones = publicationRepository.findAll();
+        PageRequest pr = PageRequest.of(page, size);
         log.info("---> finalizado servicio buscar publicaciones");
-        return publicaciones.stream().map(PublicationMap::mapToDto).collect(Collectors.toList());
+        var publicaciones = publicationRepository.findAll(pr);
+
+        return publicationRepository.findAll(pr).map(PublicationMap::mapToDto);
     }
 
     @Override
@@ -90,6 +95,15 @@ public class PublicationServiceImpl implements PublicationService {
         log.info("---> eliminando publicacion...");
         publicationRepository.deleteById(id);
         log.info("---> finalizado servicio eliminar publicacion");
+    }
+
+    @Override
+    public List<PublicationResponse> getByTitle(String tile) {
+        log.info("---> inicio servicio buscar publicacion por titulo");
+        log.info("---> buscando publicaciones con titulo {}...", tile);
+        var response = publicationRepository.findByTitleContaining(tile);
+        log.info("---> finalizado servicio buscar publicacion por titulo");
+        return response.stream().map(PublicationMap::mapToDto).collect(Collectors.toList());
     }
 
     private void validatePublication(PublicationRequest request){
