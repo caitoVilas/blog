@@ -3,6 +3,7 @@ package com.blog.domain.entites;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * @author claudio.vilas
@@ -25,4 +26,6 @@ public class Publication {
     @Column(length = 100)
     private String description;
     private String content;
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Coment> coments;
 }
