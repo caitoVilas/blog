@@ -16,10 +16,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 @Builder
-public class PublicationResponse {
+public class ComentResponse {
     private Long id;
-    private String title;
-    private String description;
-    private String content;
-    private Set<ComentResponse> coments;
+    private String name;
+    private String email;
+    private String body;
 }
