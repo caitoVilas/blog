@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author claudio.vilas
  * date: 09/2023
@@ -96,6 +99,8 @@ public class ComentServiceImpl implements ComentService {
     }
 
     private void validateComent(ComentRequest request){
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
         if (request.getName().isBlank()){
             log.error(ComentConst.C_NAME_EMPTY);
             throw new BadRequestException(ComentConst.C_NAME_EMPTY);
@@ -107,6 +112,14 @@ public class ComentServiceImpl implements ComentService {
         if (request.getBody().isBlank()){
             log.error(ComentConst.C_BODY_EMPTY);
             throw new BadRequestException(ComentConst.C_BODY_EMPTY);
+        }
+
+        Matcher matcher = pattern.matcher(request.getEmail());
+        if (matcher.find()) {
+            return;
+        }else{
+            log.error(ComentConst.C_EMAIL_NO_VALID);
+            throw new BadRequestException(ComentConst.C_EMAIL_NO_VALID);
         }
     }
 }
