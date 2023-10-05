@@ -9,4 +9,5 @@ public class ComentConst {
     public static final String C_EMAIL_EMPTY = "el email es requerido";
     public static final String C_BODY_EMPTY = "comentario vacio";
     public static final String C_ID_NOT_FOUND = "no se encuentra comentario con id: ";
+    public static final String C_EMAIL_NO_VALID = "el formato de email no es valido";
 }
